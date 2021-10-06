@@ -18,6 +18,14 @@ app.use(express.urlencoded({
 	extended: true
 }))
 
+const db = require("./app/models")
+
+db.sequelize.sync()
+// // drop table if it already exists
+// db.sequelize.sync({ force: true }).then(() => {
+//   console.log("Drop DB and re-sync")
+// })
+
 // basic route
 app.get("/", (req, res) => {
 	res.json({ message: "Welcome to the Romina application" })
@@ -25,6 +33,7 @@ app.get("/", (req, res) => {
 
 // set port and listen for requests
 const PORT = process.env.PORT || 8080
+
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`)
 })
