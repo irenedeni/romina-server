@@ -4,6 +4,14 @@
   "description": "Node.js REST with Express, Sequelize and PostgreSQL ",
   "main": "server.js",
   "license": "MIT",
+  "keywords": [
+    "nodejs",
+    "express",
+    "sequelize",
+    "rest",
+    "api",
+    "postgresql"
+ ],
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
