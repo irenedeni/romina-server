@@ -4,9 +4,11 @@ const Op = db.Sequelize.Op
 
 // create & save new trip
 exports.create = (req, res) => {
-  console.log("request in create Trip", req.body )
+  console.log("RES", res)
+  console.log("REQ", req)
+
     // Validate request
-    if (!req.body.name) {
+    if (!req.name) {
       res.status(400).send({
         message: "Content can't be empty!"
       });
@@ -15,29 +17,25 @@ exports.create = (req, res) => {
   
     // Create a Trip
     const trip = {
-      name: req.body.name,
-      startDate: req.body.startDate,
-      endDate: req.body.endDate,
-      published: req.body.published ? req.body.published : false
+      name: req.name,
+      startDate: req.startDate,
+      endDate: req.endDate,
+      published: req.published ? req.published : false
     };
   
-    // Save Trip in 
+    // Save Trip in db
     Trip.create(trip)
-      .then(data => {
-        res.send(data);
+      .then(trip => {
+        console.log("Created trip: " + JSON.stringify(trip, null, 4))
+        return trip
       })
       .catch(e => {
-        res.status(500).send({
-          message: e.message || "Some error occurred while creating the trip."
-        });
+        console.log(e)
       });
   };
 
 // get all trips from DB
 exports.findAll = (req, res) => {
-  console.log("req in findall",req.query)
-  console.log("res in findall",res)
-
   const name = req.query.name
   var condition = name ? { name: {[Op.iLike]: `%${name}`} } : null
 
@@ -45,7 +43,6 @@ exports.findAll = (req, res) => {
   // and consider it as condition for findAll() method.
   Trip.findAll({ where: condition })
   .then(data => {
-    console.log('data', data)
     res.send(data)
   })
   .catch(e => {
@@ -72,6 +69,17 @@ exports.findOne = (req, res) => {
     res.status(500).send({
       message: e.message || "Error retrieving trip with id=" + id
     })
+  })
+}
+
+// find all days of a single trip
+exports.findDaysByTripId = (tripId) => {
+  return Trip.findByPk(tripId, { include: ["days"]})
+  .then(trip => {
+    return trip
+  })
+  .catch(e => {
+    console.log("Error while finding the days: ", e);
   })
 }
 

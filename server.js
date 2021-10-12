@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
-
+const tripController = require("./app/controllers/trip.controller");
+const dayController = require("./app/controllers/day.controller");
 
 const app = express()
 
@@ -21,12 +22,33 @@ app.use(express.urlencoded({
 
 const db = require("./app/models")
 
-// sinc db either like this or with force: true
+// run below is just for testing
+const run = async () => {
+	const trip1 = await tripController.create({
+		name: "test trip 100",
+		startDate: new Date(),
+		endDate: new Date(),
+		published: true
+	})
+
+	const day1 = await dayController.create(1, {
+		name: "Monday",
+		date: new Date(),
+		tripId: 1
+	})
+}
+
+// sinc db either like this or with force: true like below
 // db.sequelize.sync()
 
 // drop table if it already exists, useful for development
-db.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop DB and re-sync")
+db.sequelize.sync({ force: true })
+// ()
+.then(() => {
+  console.log("Drop DB (when force=true) and re-sync")
+
+	// run() below is just for testing. 
+	run()
 })
 
 // basic route
