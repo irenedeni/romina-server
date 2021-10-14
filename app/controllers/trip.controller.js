@@ -1,11 +1,10 @@
 const db = require("../models")
 const Trip = db.trips
+const Day = db.days
 const Op = db.Sequelize.Op
 
 // create & save new trip
 exports.create = (req, res) => {
-  console.log("RES", res)
-  console.log("REQ", req)
 
     // Validate request
     if (!req.name) {
@@ -34,15 +33,17 @@ exports.create = (req, res) => {
       });
   };
 
-// get all trips from DB
+  // get all trips from DB
 exports.findAll = (req, res) => {
+  console.log("REQ", req)
+  console.log("RES", res)
+
   const name = req.query.name
   var condition = name ? { name: {[Op.iLike]: `%${name}`} } : null
 
-  // req.query.name to get query string from the Request 
-  // and consider it as condition for findAll() method.
   Trip.findAll({ where: condition })
   .then(data => {
+    console.log(data)
     res.send(data)
   })
   .catch(e => {
@@ -52,6 +53,20 @@ exports.findAll = (req, res) => {
   })
 }
 
+// get all trips including days
+// exports.findAll = () => {
+//   Trip.findAll({ include: [{
+//     model: Day,
+//     as: "days"
+//   }] })
+//   .then(trips => {
+//     console.log("Found trips:", trips)
+//     return trips
+//   })
+//   .catch(e => {
+//     console.log(e)
+//   })
+// }
 // find a single trip by id
 exports.findOne = (req, res) => {
   const id = req.params.id
@@ -71,17 +86,21 @@ exports.findOne = (req, res) => {
     })
   })
 }
+// find trip by id
+exports.findTripById = () => {
+  const id = req.params.id
 
-// find all days of a single trip
-exports.findDaysByTripId = (tripId) => {
-  return Trip.findByPk(tripId, { include: ["days"]})
+  return Trip.findByPk(id, { include: [{
+    model: Day,
+    as: "days"
+  }]})
   .then(trip => {
+    console.log("Found trip:", trip)
     return trip
   })
-  .catch(e => {
-    console.log("Error while finding the days: ", e);
-  })
+  .catch(e => console.log("Error while retrieving trip ", e))
 }
+
 
 // update trip by id
 exports.update = (req, res) => {

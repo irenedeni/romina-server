@@ -2,21 +2,27 @@
 // It will generate the following columns:
 // id, name, startDate, endDate, createdAt, updatedAt.
 
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize, DataTypes) => {
   const Trip = sequelize.define("trip", {
     name: {
-      type: Sequelize.STRING
+      type: DataTypes.STRING
     },
     startDate: {
-      type: Sequelize.DATE
+      type: DataTypes.DATE
     },
     endDate: {
-      type: Sequelize.DATE
+      type: DataTypes.DATE
     },
     published: {
-      type: Sequelize.BOOLEAN
+      type: DataTypes.BOOLEAN
     }
   })
+  // Trip.associate = function(models) {
+  //   Trip.hasMany(models.Day, {
+  //     foreignKey: 'tripId',
+  //     as: 'days'
+  //   })
+  // }
   return Trip
 }
 

@@ -53,16 +53,16 @@ exports.create = (tripId, singleDay) => {
   }
 
 
-// get days for a given day id
-exports.findDaysByTripId = (dayId) => {
-  return Day.findByPk(dayId, { include: ["trip"] })
-  .then(day => {
-    return day
-  })
-  .catch(e => {
-    console.log("Error while finding comment: ", e);
-  })
-}
+// get days for a given trip id
+// exports.findDaysByTripId = (tripId) => {
+//   return Trip.findByPk(tripId, { include: ["days"] })
+//   .then(trip => {
+//     return trip
+//   })
+//   .catch(e => {
+//     console.log("Error while finding trip: ", e);
+//   })
+// }
 
 // // find a single trip by id
 // exports.findOne = (req, res) => {

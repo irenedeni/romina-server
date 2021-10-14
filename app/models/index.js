@@ -22,7 +22,10 @@ db.trips = require('./trip.model.js')(sequelize, Sequelize)
 db.days = require('./day.model.js')(sequelize, Sequelize)
 
 // one trip with many days
-db.trips.hasMany(db.days, { as: "days", })
+db.trips.hasMany(db.days, {
+  as: "days",
+  foreignKey: "tripId"
+})
 
 // that one day is associated with that one trip only
 db.days.belongsTo(db.trips, {

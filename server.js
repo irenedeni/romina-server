@@ -24,31 +24,34 @@ const db = require("./app/models")
 
 // run below is just for testing
 const run = async () => {
-	const trip1 = await tripController.create({
-		name: "test trip 100",
+
+	await tripController.create({
+		name: "irene 10",
 		startDate: new Date(),
 		endDate: new Date(),
 		published: true
 	})
 
-	const day1 = await dayController.create(1, {
-		name: "Monday",
+	await dayController.create(1, {
+		name: "thursday",
 		date: new Date(),
 		tripId: 1
 	})
+
 }
 
-// sinc db either like this or with force: true like below
-// db.sequelize.sync()
-
 // drop table if it already exists, useful for development
-db.sequelize.sync({ force: true })
-// ()
+db.sequelize.sync
+// ({ force: true })
+()
 .then(() => {
   console.log("Drop DB (when force=true) and re-sync")
 
 	// run() below is just for testing. 
-	run()
+	// run()
+	// await tripController.findAll()
+
+	// await tripController.findTripById(1)
 })
 
 // basic route

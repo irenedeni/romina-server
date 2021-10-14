@@ -1,12 +1,17 @@
 
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize, DataTypes) => {
   const Day = sequelize.define("day", {
     name: {
-      type: Sequelize.STRING
+      type: DataTypes.STRING
     },
     date: {
-      type: Sequelize.DATE
+      type: DataTypes.DATE
     }
   })
+  // Day.associate = function(models) {
+  //   Day.belongsTo(models.Trip, {
+  //     foreignKey: 'tripId'    
+  //   })
+  // }
   return Day
 }
