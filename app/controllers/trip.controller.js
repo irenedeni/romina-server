@@ -1,4 +1,6 @@
-const createDaysFromTrip = require("../lib/createDaysFromTrip")
+const moment = require('moment')
+
+const tripFunctions = require("../lib/daysAndTrips.js")
 
 const db = require("../models")
 const Trip = db.trips
@@ -7,44 +9,54 @@ const Op = db.Sequelize.Op
 
 // create & save new trip
 exports.create = (req, res) => {
-
+  const request = req.body ? req.body : req
+  
     // Validate request
-    if (!req.name) {
+    if (!request.name) {
       res.status(400).send({
         message: "Content can't be empty!"
-      });
-      return;
+      })
+      return
+    }
+
+    const startDate = moment(request.startDate)
+    const endDate = moment(request.endDate)
+    if(startDate > endDate){
+      console.log("ERROR: End date can't be before start date")
+      res.status(400).send({
+        message: "End date can't be before the start date"
+      })
+      return
     }
 
     // Create a Trip
     const trip = {
-      name: req.name,
-      confirmed: req.confirmed ? req.confirmed : false
+      name: request.name,
+      confirmed: request.confirmed ? request.confirmed : false
     }
   
     // Save Trip in db
     Trip.create(trip)
       .then(trip => {
         console.log("Created trip: " + JSON.stringify(trip, null, 4))
-        const daysArray = createDaysFromTrip(req.startDate, req.endDate)
+        const daysArray = tripFunctions.createDaysFromTrip(request.startDate, request.endDate)
         daysArray && daysArray.length && daysArray.map(date => {
-      console.log("TRIP ID",trip.id)
-      day = {
-        name: "day",
-        date: date,
-        tripId: trip.id
-      }
-      Day.create(day)
-      .then(day => {
-        console.log("created day" + JSON.stringify(day, null, 4))
-        return day
-      })
+          day = {
+            name: "day",
+            date: date,
+            tripId: trip.id
+          }
+          Day.create(day)
+            .then(day => {
+              console.log("Created day" + JSON.stringify(day, null, 4))
+              return day
+            })
       .catch(e => {
         console.log(e)
       })
     })
     if(!daysArray || daysArray.length < 1){
-      console.log(`There was an error while creating days in trip '${req.name}'`)
+      console.log(`There was an error while creating days in trip '${request.name}'`)
     }
       })
       .catch(e => {
@@ -100,20 +112,6 @@ exports.findOne = (req, res) => {
     })
   })
 }
-// find trip by id
-exports.findTripById = () => {
-  const id = req.params.id
-
-  return Trip.findByPk(id, { include: [{
-    model: Day,
-    as: "days"
-  }]})
-  .then(trip => {
-    console.log("Found trip:", trip)
-    return trip
-  })
-  .catch(e => console.log("Error while retrieving trip ", e))
-}
 
 
 // update trip by id
@@ -124,9 +122,39 @@ exports.update = (req, res) => {
   })
   .then(num => {
     if(num == 1){
-      res.send({
+     res.send({
         message: "Trip was updated successfully"
       })
+      const allDaysArray = req.body?.days?.map(day => day.date)
+      const firstDay = new Date(allDaysArray[0])
+      const lastDay = new Date(allDaysArray[allDaysArray.length - 1])
+    
+      const startDate = new Date(req.body.startDate)
+      const endDate = new Date (req.body.endDate)
+    
+    
+      if(firstDay > startDate || endDate > lastDay){
+        const dateRange = tripFunctions.getDatesWithinRange(startDate, firstDay)
+        console.log("dateRange",dateRange)
+        dateRange && dateRange.map(date => {
+          const day = {
+            name: "name",
+            date: date,
+            tripId: id
+          }
+          Day.create(day)
+          .then(day => {
+            console.log("Created day" + JSON.stringify(day, null, 4))
+            return day
+          })
+        })
+        console.log("we need to create days")
+        
+      } else if (firstDay < startDate || endDate < lastDay) {
+        console.log("we need to remove days")
+      } else console.log("no change - no need to do anything")
+
+
     } else {
       res.send({
         message: `Can't find trip with id=${id}`
@@ -137,7 +165,10 @@ exports.update = (req, res) => {
     res.status(500).send({
       message: e.message || "Error while updating trip with id=" + id
     })
-  })
+  }),
+  console.log("req.body update", req.body)
+  
+  
 }
 
 // delete trip by id

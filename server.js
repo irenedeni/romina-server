@@ -27,17 +27,10 @@ const run = async () => {
 
 	await tripController.create({
 		name: "irene 11",
-		startDate: "2021-10-15T09:56:27.432Z",
-		endDate: "2021-10-20T09:56:27.432Z",
+		startDate: "2010-10-15",
+		endDate: "2010-10-20",
 		confirmed: true
 	})
-
-	// await dayController.create(1, {
-	// 	name: "thursday",
-	// 	date: new Date(),
-	// 	tripId: 1
-	// })
-
 }
 
 // drop table if it already exists, useful for development
@@ -48,7 +41,7 @@ db.sequelize.sync
   console.log("Drop DB (when force=true) and re-sync")
 
 	// run() below is just for testing. 
-	run()
+	// run()
 	// await tripController.findAll()
 
 	// await tripController.findTripById(1)
