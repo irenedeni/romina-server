@@ -14,9 +14,7 @@ const Op = db.Sequelize.Op
 //   // Create a Trip
 //   const trip = {
 //     name: req.body.name,
-//     startDate: req.body.startDate,
-//     endDate: req.body.endDate,
-//     published: req.body.published ? req.body.published : false
+//     confirmed: req.body.confirmed ? req.body.confirmed : false
 //   };
 
 //   // Save Trip in 
@@ -150,15 +148,15 @@ exports.create = (tripId, singleDay) => {
 //   })
 // }
 
-// // find all published trips
-// exports.findAllPublished = (req, res) => {
-//   Trip.findAll({ where: { published: true }})
+// // find all confirmed trips
+// exports.findAllConfirmed = (req, res) => {
+//   Trip.findAll({ where: { confirmed: true }})
 //   .then(data => {
 //     res.send(data)
 //   })
 //   .catch(e => {
 //     res.status(500).send({
-//       message: e.message || "Some error occurred while retrieving published trips"
+//       message: e.message || "Some error occurred while retrieving confirmed trips"
 //     })
 //   })
 // } 

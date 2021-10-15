@@ -12,14 +12,11 @@ module.exports = app => {
   // retrieve all trips
   router.get("/", trips.findAll)
 
-  // retrieve all published trips
-  router.get("/published", trips.findAllPublished)
+  // retrieve all confirmed trips
+  router.get("/confirmed", trips.findAllConfirmed)
 
-  // retrieve one trip with id
+  // retrieve one trip with id, including days
   router.get("/:id", trips.findOne)
-
-  // retrieve all days from 1 single trip
-  router.get("/:id", trips.findTripById)
 
   // update a trip with id
   router.put("/:id", trips.update)
@@ -30,5 +27,5 @@ module.exports = app => {
   // delete all trips
   router.delete("/", trips.deleteAll)
 
-  app.use('/api/trips', router)
+  app.use("/api/trips", router)
 }

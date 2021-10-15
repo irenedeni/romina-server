@@ -1,3 +1,5 @@
+const createDaysFromTrip = require("../lib/createDaysFromTrip")
+
 const db = require("../models")
 const Trip = db.trips
 const Day = db.days
@@ -13,37 +15,58 @@ exports.create = (req, res) => {
       });
       return;
     }
-  
+
     // Create a Trip
     const trip = {
       name: req.name,
-      startDate: req.startDate,
-      endDate: req.endDate,
-      published: req.published ? req.published : false
-    };
+      confirmed: req.confirmed ? req.confirmed : false
+    }
   
     // Save Trip in db
     Trip.create(trip)
       .then(trip => {
         console.log("Created trip: " + JSON.stringify(trip, null, 4))
-        return trip
+        const daysArray = createDaysFromTrip(req.startDate, req.endDate)
+        daysArray && daysArray.length && daysArray.map(date => {
+      console.log("TRIP ID",trip.id)
+      day = {
+        name: "day",
+        date: date,
+        tripId: trip.id
+      }
+      Day.create(day)
+      .then(day => {
+        console.log("created day" + JSON.stringify(day, null, 4))
+        return day
       })
       .catch(e => {
         console.log(e)
-      });
-  };
+      })
+    })
+    if(!daysArray || daysArray.length < 1){
+      console.log(`There was an error while creating days in trip '${req.name}'`)
+    }
+      })
+      .catch(e => {
+        console.log(e)
+      })
+      return trip
+  }
 
   // get all trips from DB
 exports.findAll = (req, res) => {
-  console.log("REQ", req)
-  console.log("RES", res)
 
   const name = req.query.name
   var condition = name ? { name: {[Op.iLike]: `%${name}`} } : null
 
-  Trip.findAll({ where: condition })
+  Trip.findAll({ 
+    where: condition, 
+    include: [{
+      model: Day,
+      as: "days"
+    }]
+  })
   .then(data => {
-    console.log(data)
     res.send(data)
   })
   .catch(e => {
@@ -53,24 +76,15 @@ exports.findAll = (req, res) => {
   })
 }
 
-// get all trips including days
-// exports.findAll = () => {
-//   Trip.findAll({ include: [{
-//     model: Day,
-//     as: "days"
-//   }] })
-//   .then(trips => {
-//     console.log("Found trips:", trips)
-//     return trips
-//   })
-//   .catch(e => {
-//     console.log(e)
-//   })
-// }
 // find a single trip by id
 exports.findOne = (req, res) => {
   const id = req.params.id
-  Trip.findByPk(id)
+  Trip.findByPk(id, { 
+    include: [{
+      model: Day,
+      as: "days"
+    }]
+  })
   .then(data => {
     if(data) {
       res.send(data)
@@ -168,15 +182,15 @@ exports.deleteAll = (req, res) => {
   })
 }
 
-// find all published trips
-exports.findAllPublished = (req, res) => {
-  Trip.findAll({ where: { published: true }})
+// find all confirmed trips
+exports.findAllConfirmed = (req, res) => {
+  Trip.findAll({ where: { confirmed: true }})
   .then(data => {
     res.send(data)
   })
   .catch(e => {
     res.status(500).send({
-      message: e.message || "Some error occurred while retrieving published trips"
+      message: e.message || "Some error occurred while retrieving confirmed trips"
     })
   })
 } 

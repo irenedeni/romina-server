@@ -8,10 +8,5 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE
     }
   })
-  // Day.associate = function(models) {
-  //   Day.belongsTo(models.Trip, {
-  //     foreignKey: 'tripId'    
-  //   })
-  // }
   return Day
 }

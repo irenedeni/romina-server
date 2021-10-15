@@ -26,17 +26,17 @@ const db = require("./app/models")
 const run = async () => {
 
 	await tripController.create({
-		name: "irene 10",
-		startDate: new Date(),
-		endDate: new Date(),
-		published: true
+		name: "irene 11",
+		startDate: "2021-10-15T09:56:27.432Z",
+		endDate: "2021-10-20T09:56:27.432Z",
+		confirmed: true
 	})
 
-	await dayController.create(1, {
-		name: "thursday",
-		date: new Date(),
-		tripId: 1
-	})
+	// await dayController.create(1, {
+	// 	name: "thursday",
+	// 	date: new Date(),
+	// 	tripId: 1
+	// })
 
 }
 
@@ -48,20 +48,21 @@ db.sequelize.sync
   console.log("Drop DB (when force=true) and re-sync")
 
 	// run() below is just for testing. 
-	// run()
+	run()
 	// await tripController.findAll()
 
 	// await tripController.findTripById(1)
 })
 
-// basic route
+
 app.get("/", (req, res) => {
 	res.json({ message: "Welcome to the Romina application" })
 })
 
-// set the routes for the app
-require('./app/routes/trip.routes')(app)
-// set port and listen for requests
+// sets the routes for the app
+require("./app/routes/trip.routes")(app)
+
+
 const PORT = process.env.PORT || 8080
 
 app.listen(PORT, () => {
