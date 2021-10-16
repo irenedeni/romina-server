@@ -16,10 +16,10 @@ module.exports = app => {
   router.get("/confirmed", trips.findAllConfirmed)
 
   // retrieve one trip with id, including days
-  router.get("/:id", trips.findOne)
+  router.get(("/:id"), trips.findOne)
 
   // update a trip with id
-  router.put("/edit/:id", trips.update)
+  router.put("/:id", trips.update)
 
   // delete a trip with id
   router.delete("/:id", trips.delete)

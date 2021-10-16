@@ -41,8 +41,8 @@ exports.create = (req, res) => {
         console.log("Created trip: " + JSON.stringify(trip, null, 4))
         const daysArray = tripFunctions.createDaysFromTrip(request.startDate, request.endDate)
         daysArray && daysArray.length && daysArray.map(date => {
+          console.log(date)
           day = {
-            name: "day",
             date: date,
             tripId: trip.id
           }
@@ -118,6 +118,7 @@ exports.findOne = (req, res) => {
 // update trip by id (only name! To update trip length, delete or create days)
 exports.update = (req, res) => {
   const id = req.params.id
+  console.log("ïd", id)
   Trip.update(req.body, {
     where: { id: id }
   })
