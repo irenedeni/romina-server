@@ -65,10 +65,11 @@ exports.create = (req, res) => {
       return trip
   }
 
-  // get all trips from DB
+  // get all trips from DB (including days)
 exports.findAll = (req, res) => {
 
   const name = req.query.name
+  console.log("req.query", req.query)
   var condition = name ? { name: {[Op.iLike]: `%${name}`} } : null
 
   Trip.findAll({ 

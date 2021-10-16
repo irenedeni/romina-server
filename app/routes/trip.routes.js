@@ -19,7 +19,7 @@ module.exports = app => {
   router.get("/:id", trips.findOne)
 
   // update a trip with id
-  router.put("/:id", trips.update)
+  router.put("/edit/:id", trips.update)
 
   // delete a trip with id
   router.delete("/:id", trips.delete)
