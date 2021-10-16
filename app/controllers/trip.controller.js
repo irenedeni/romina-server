@@ -88,7 +88,7 @@ exports.findAll = (req, res) => {
   })
 }
 
-// find a single trip by id
+// find a single trip by id, including days
 exports.findOne = (req, res) => {
   const id = req.params.id
   Trip.findByPk(id, { 
@@ -114,7 +114,7 @@ exports.findOne = (req, res) => {
 }
 
 
-// update trip by id
+// update trip by id (only name! To update trip length, delete or create days)
 exports.update = (req, res) => {
   const id = req.params.id
   Trip.update(req.body, {
@@ -125,36 +125,6 @@ exports.update = (req, res) => {
      res.send({
         message: "Trip was updated successfully"
       })
-      const allDaysArray = req.body?.days?.map(day => day.date)
-      const firstDay = new Date(allDaysArray[0])
-      const lastDay = new Date(allDaysArray[allDaysArray.length - 1])
-    
-      const startDate = new Date(req.body.startDate)
-      const endDate = new Date (req.body.endDate)
-    
-    
-      if(firstDay > startDate || endDate > lastDay){
-        const dateRange = tripFunctions.getDatesWithinRange(startDate, firstDay)
-        console.log("dateRange",dateRange)
-        dateRange && dateRange.map(date => {
-          const day = {
-            name: "name",
-            date: date,
-            tripId: id
-          }
-          Day.create(day)
-          .then(day => {
-            console.log("Created day" + JSON.stringify(day, null, 4))
-            return day
-          })
-        })
-        console.log("we need to create days")
-        
-      } else if (firstDay < startDate || endDate < lastDay) {
-        console.log("we need to remove days")
-      } else console.log("no change - no need to do anything")
-
-
     } else {
       res.send({
         message: `Can't find trip with id=${id}`
@@ -165,19 +135,54 @@ exports.update = (req, res) => {
     res.status(500).send({
       message: e.message || "Error while updating trip with id=" + id
     })
-  }),
-  console.log("req.body update", req.body)
-  
-  
+  })
+
+  // const allDaysArray = req.body?.days?.map(day => day.date)
+  // allDaysArray.sort(tripFunctions.sortDatesInArray)
+  // console.log("allDaysArray",allDaysArray)
+  // const firstDay = new Date(allDaysArray[0])
+  // const lastDay = new Date(allDaysArray[allDaysArray.length - 1])
+
+  // const startDate = new Date(req.body.startDate)
+  // const endDate = new Date (req.body.endDate)
+
+
+  // if(firstDay > startDate || endDate > lastDay){
+  //   const extraDaysBeginning = tripFunctions.getDatesWithinRange(startDate, firstDay)
+  //   const extraDaysEnd = tripFunctions.getDatesWithinRange(lastDay, endDate)
+
+  //   const dateRange = extraDaysBeginning.concat(extraDaysEnd)
+    
+  //   console.log("dateRange",dateRange)
+  //   dateRange && dateRange.map(date => {
+  //     const day = {
+  //       name: "name",
+  //       date: date,
+  //       tripId: id
+  //     }
+  //     Day.create(day)
+  //     .then(day => {
+  //       console.log("Created day" + JSON.stringify(day, null, 4))
+  //       return day
+  //     })
+  //   })
+  //   console.log("we need to create days")
+    
+  // } else if (firstDay < startDate || endDate < lastDay) {
+  //   console.log("we need to remove days")
+  // } else console.log("no change - no need to do anything")
 }
 
-// delete trip by id
+// delete trip by id 
 exports.delete = (req, res) => {
   const id = req.params.id
   Trip.destroy({
     where: { id: id }
   })
   .then(num => {
+    Day.destroy({
+      where: { tripId: id }
+    })
     if(num == 1){
       res.send({
         message: "Trip was deleted successfully"
