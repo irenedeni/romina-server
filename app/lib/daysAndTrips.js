@@ -5,7 +5,7 @@ const createDaysFromTrip = (start, end) => {
   let startDate = moment(start)
   const endDate = moment(end)
   while(startDate <= endDate){
-    dateArray.push(moment(startDate).format("YYYY-MM-DD"))
+    dateArray.push(moment(startDate).format("YYYY-MM-DD HH:mm:ss"))
     startDate = moment(startDate).add(1, "days")
   }
   return dateArray
