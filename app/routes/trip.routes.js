@@ -2,35 +2,51 @@ module.exports = app => {
   const trips = require("../controllers/trip.controller.js")
   const days = require("../controllers/day.controller.js")
   const slots = require("../controllers/slot.controller.js")
+  const carers = require("../controllers/carer.controller.js")
 
   var router = require("express").Router()
 
-  // create new trip (which also creates new days)
-  router.post("/", trips.create)
+  // ** CREATE ** 
 
-  // create new slot
+  // trip (with days)
+  router.post("/trips", trips.create)
+
+  // slot
   router.post(("/:tripId/days/:id/slots"), slots.create)
 
-  // retrieve all trips
-  router.get("/", trips.findAll)
+  // carer
+  router.post(("/carers"), carers.create)
+
+
+  // ** GET ALL **
+  // trips
+  router.get("/trips", trips.findAll)
   
-  // retrieve all confirmed trips
-  router.get("/confirmed", trips.findAllConfirmed)
+  // confirmed trips
+  router.get("/trips/confirmed", trips.findAllConfirmed)
 
-  // retrieve one trip with id, including days
-  router.get(("/:tripId/days/:id"), days.findOne)
+  // ** GET ONE **
 
-  // retrieve all days from a trip (only days)
-  router.get("/:id", days.findOne)
+  // trip with days
+  router.get("/trips/:id", trips.findOne)
 
-  // update a trip with id
-  router.put("/:id", trips.update)
+  // day 
+  router.get(("/trips/:tripId/days/:id"), days.findOne)
 
-  // delete a trip with id
-  router.delete("/:id", trips.delete)
 
-  // delete all trips
-  router.delete("/", trips.deleteAll)
+  // ** UPDATE **
+  // trip
+  router.put("/trips/:id", trips.update)
 
-  app.use("/api/trips", router)
+
+  // ** DELETE ONE **
+  // trip
+  router.delete("/trips/:id", trips.delete)
+
+  
+  // ** DELETE ALL **
+  // trips
+  router.delete("/trips", trips.deleteAll)
+
+  app.use("/api", router)
 }

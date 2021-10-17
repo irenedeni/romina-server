@@ -18,8 +18,8 @@ exports.create = (req, res) => {
     // Create a Slot
     const slot = {
       dayId: dayId,
-      timeframe: "morning",
-      stayType: "quick check"
+      timeframe: request.timeframe,
+      stayType: request.stayType
     }
   
     // Save Slot in db
