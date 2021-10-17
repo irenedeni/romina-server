@@ -4,7 +4,7 @@ const Day = db.days
 
 exports.findOne = (req, res) => {
   console.log("req.params", req.params)
-  const id = req.params.id
+  const dayId = req.params.id
   Day.findByPk(id)
   .then(data => {
     console.log("DATA", data)

@@ -20,17 +20,29 @@ db.sequelize = sequelize
 
 db.trips = require('./trip.model.js')(sequelize, Sequelize)
 db.days = require('./day.model.js')(sequelize, Sequelize)
+db.slots = require('./slot.model.js')(sequelize, Sequelize)
 
-// one trip with many days
+// One-to-many Trip -> Days
 db.trips.hasMany(db.days, {
   as: "days",
   foreignKey: "tripId"
 })
 
-// that one day is associated with that one trip only
 db.days.belongsTo(db.trips, {
   foreignKey: "tripId",
   as: "trip"
+})
+
+// One-to-many Day -> Slots
+db.days.hasMany(db.slots, {
+  as: "slots",
+  foreignKey: "dayId"
+})
+
+// that one day is associated with that one trip only
+db.slots.belongsTo(db.days, {
+  foreignKey: "dayId",
+  as: "day"
 })
 
 module.exports = db

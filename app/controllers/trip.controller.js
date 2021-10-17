@@ -63,7 +63,7 @@ exports.create = (req, res) => {
         console.log(e)
       })
       return trip
-  }
+}
 
   // get all trips from DB (including days)
 exports.findAll = (req, res) => {

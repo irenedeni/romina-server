@@ -1,16 +1,19 @@
 module.exports = app => {
   const trips = require("../controllers/trip.controller.js")
   const days = require("../controllers/day.controller.js")
+  const slots = require("../controllers/slot.controller.js")
 
   var router = require("express").Router()
 
-  // create new trip
+  // create new trip (which also creates new days)
   router.post("/", trips.create)
+
+  // create new slot
+  router.post(("/:tripId/days/:id/slots"), slots.create)
 
   // retrieve all trips
   router.get("/", trips.findAll)
   
-
   // retrieve all confirmed trips
   router.get("/confirmed", trips.findAllConfirmed)
 
