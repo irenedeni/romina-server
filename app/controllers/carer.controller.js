@@ -14,6 +14,7 @@ exports.create = (req, res) => {
       name: request.name,
       email: request.email ? request.email : "",
       phone: request.phone ? request.phone : "",
+      professional: request.professional ? request.professional : false
     }
   
     Carer.create(carer)

@@ -6,6 +6,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     stayType: {
       type: DataTypes.ENUM('quick check', 'extended stay')
+    },
+    notes: {
+      type: DataTypes.STRING
     }
   })
   return Slot

@@ -22,11 +22,11 @@ db.trips = require('./trip.model.js')(sequelize, Sequelize)
 db.days = require('./day.model.js')(sequelize, Sequelize)
 db.slots = require('./slot.model.js')(sequelize, Sequelize)
 db.carers = require('./carer.model.js')(sequelize, Sequelize)
+db.tasks = require('./task.model.js')(sequelize, Sequelize)
 
 // One-to-many Trip -> Days
 db.trips.hasMany(db.days, {
-  as: "days",
-  foreignKey: "tripId"
+  as: "days"
 })
 
 db.days.belongsTo(db.trips, {
@@ -36,8 +36,7 @@ db.days.belongsTo(db.trips, {
 
 // One-to-many Day -> Slots
 db.days.hasMany(db.slots, {
-  as: "slots",
-  foreignKey: "dayId"
+  as: "slots"
 })
 
 db.slots.belongsTo(db.days, {
@@ -48,12 +47,24 @@ db.slots.belongsTo(db.days, {
 // One-to-many Carer -> Slots
 db.carers.hasMany(db.slots, {
   as: "slots",
-  foreignKey: "slotId"
 })
 
 db.slots.belongsTo(db.carers, {
   foreignKey: "carerId",
   as: "carer"
 })
+
+// Many-to-many Tasks -> Slots
+db.tasks.belongsToMany(db.slots, {
+  through: "tasksSlots",
+  as: "slots",
+  foreignKey: "taskId",
+});
+
+db.slots.belongsToMany(db.tasks, {
+  through: "tasksSlots",
+  as: "tasks",
+  foreignKey: "slotId",
+});
 
 module.exports = db

@@ -53,7 +53,7 @@ app.get("/", (req, res) => {
 })
 
 // sets the routes for the app
-require("./app/routes/trip.routes")(app)
+require("./app/routes/app.routes")(app)
 
 
 const PORT = process.env.PORT || 8080

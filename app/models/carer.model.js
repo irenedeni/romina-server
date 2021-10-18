@@ -10,6 +10,9 @@ module.exports = (sequelize, DataTypes) => {
     email: {
       type: DataTypes.STRING
     },
+    professional: {
+      type: DataTypes.BOOLEAN
+    }
   })
   return Carer
 }

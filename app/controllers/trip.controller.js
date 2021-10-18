@@ -1,10 +1,12 @@
 const moment = require('moment')
 
 const tripFunctions = require("../lib/daysAndTrips.js")
+const dayController = require("./day.controller")
 
 const db = require("../models")
 const Trip = db.trips
 const Day = db.days
+const Slot = db.slots
 const Op = db.Sequelize.Op
 
 // create & save new trip
@@ -41,7 +43,6 @@ exports.create = (req, res) => {
         console.log("Created trip: " + JSON.stringify(trip, null, 4))
         const daysArray = tripFunctions.createDaysFromTrip(request.startDate, request.endDate)
         daysArray && daysArray.length && daysArray.map(date => {
-          console.log(date)
           day = {
             date: date,
             tripId: trip.id
@@ -69,7 +70,6 @@ exports.create = (req, res) => {
 exports.findAll = (req, res) => {
 
   const name = req.query.name
-  console.log("req.query", req.query)
   var condition = name ? { name: {[Op.iLike]: `%${name}`} } : null
 
   Trip.findAll({ 
@@ -95,7 +95,11 @@ exports.findOne = (req, res) => {
   Trip.findByPk(id, { 
     include: [{
       model: Day,
-      as: "days"
+      as: "days",
+      include: [{
+        model: Slot,
+        as: "slots",
+      }]
     }]
   })
   .then(data => {
@@ -179,11 +183,13 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id
   Trip.destroy({
-    where: { id: id }
+    where: { id: id },
+    cascade: true
   })
   .then(num => {
     Day.destroy({
-      where: { tripId: id }
+      where: { tripId: id },
+      cascade: true
     })
     if(num == 1){
       res.send({
