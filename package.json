@@ -1,8 +1,11 @@
 {
   "name": "romina-server",
   "version": "1.0.0",
-  "description": "Node.js REST with Express, Sequelize and PostgreSQL ",
+  "description": "Node.js REST with Express, Sequelize and PostgreSQL",
   "main": "server.js",
+  "scripts": {
+    "start": "nodemon ."
+  },
   "license": "MIT",
   "keywords": [
     "nodejs",
@@ -11,7 +14,7 @@
     "rest",
     "api",
     "postgresql"
- ],
+  ],
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",

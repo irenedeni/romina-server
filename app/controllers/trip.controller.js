@@ -1,51 +1,85 @@
+const moment = require('moment')
+
+const tripFunctions = require("../lib/daysAndTrips.js")
+const dayController = require("./day.controller")
+
 const db = require("../models")
 const Trip = db.trips
+const Day = db.days
+const Slot = db.slots
 const Op = db.Sequelize.Op
 
 // create & save new trip
 exports.create = (req, res) => {
-  console.log("request in create Trip", req.body )
+  const request = req.body ? req.body : req
+  
     // Validate request
-    if (!req.body.name) {
+    if (!request.name) {
       res.status(400).send({
         message: "Content can't be empty!"
-      });
-      return;
+      })
+      return
     }
-  
+
+    const startDate = moment(request.startDate)
+    const endDate = moment(request.endDate)
+    if(startDate > endDate){
+      console.log("ERROR: End date can't be before start date")
+      res.status(400).send({
+        message: "End date can't be before the start date"
+      })
+      return
+    }
+
     // Create a Trip
     const trip = {
-      name: req.body.name,
-      startDate: req.body.startDate,
-      endDate: req.body.endDate,
-      published: req.body.published ? req.body.published : false
-    };
+      name: request.name,
+      confirmed: request.confirmed ? request.confirmed : false
+    }
   
-    // Save Trip in 
+    // Save Trip in db
     Trip.create(trip)
-      .then(data => {
-        res.send(data);
+      .then(trip => {
+        console.log("Created trip: " + JSON.stringify(trip, null, 4))
+        const daysArray = tripFunctions.createDaysFromTrip(request.startDate, request.endDate)
+        daysArray && daysArray.length && daysArray.map(date => {
+          day = {
+            date: date,
+            tripId: trip.id
+          }
+          Day.create(day)
+            .then(day => {
+              console.log("Created day" + JSON.stringify(day, null, 4))
+              return day
+            })
+      .catch(e => {
+        console.log(e)
+      })
+    })
+    if(!daysArray || daysArray.length < 1){
+      console.log(`There was an error while creating days in trip '${request.name}'`)
+    }
       })
       .catch(e => {
-        res.status(500).send({
-          message: e.message || "Some error occurred while creating the trip."
-        });
-      });
-  };
+        console.log(e)
+      })
+      return trip
+}
 
-// get all trips from DB
+  // get all trips from DB (including days)
 exports.findAll = (req, res) => {
-  console.log("req in findall",req.query)
-  console.log("res in findall",res)
 
   const name = req.query.name
   var condition = name ? { name: {[Op.iLike]: `%${name}`} } : null
 
-  // req.query.name to get query string from the Request 
-  // and consider it as condition for findAll() method.
-  Trip.findAll({ where: condition })
+  Trip.findAll({ 
+    where: condition, 
+    include: [{
+      model: Day,
+      as: "days"
+    }]
+  })
   .then(data => {
-    console.log('data', data)
     res.send(data)
   })
   .catch(e => {
@@ -55,10 +89,19 @@ exports.findAll = (req, res) => {
   })
 }
 
-// find a single trip by id
+// find a single trip by id, including days
 exports.findOne = (req, res) => {
   const id = req.params.id
-  Trip.findByPk(id)
+  Trip.findByPk(id, { 
+    include: [{
+      model: Day,
+      as: "days",
+      include: [{
+        model: Slot,
+        as: "slots",
+      }]
+    }]
+  })
   .then(data => {
     if(data) {
       res.send(data)
@@ -75,15 +118,17 @@ exports.findOne = (req, res) => {
   })
 }
 
-// update trip by id
+
+// update trip by id (only name! To update trip length, delete or create days)
 exports.update = (req, res) => {
   const id = req.params.id
+  console.log("ïd", id)
   Trip.update(req.body, {
     where: { id: id }
   })
   .then(num => {
     if(num == 1){
-      res.send({
+     res.send({
         message: "Trip was updated successfully"
       })
     } else {
@@ -97,15 +142,55 @@ exports.update = (req, res) => {
       message: e.message || "Error while updating trip with id=" + id
     })
   })
+
+  // const allDaysArray = req.body?.days?.map(day => day.date)
+  // allDaysArray.sort(tripFunctions.sortDatesInArray)
+  // console.log("allDaysArray",allDaysArray)
+  // const firstDay = new Date(allDaysArray[0])
+  // const lastDay = new Date(allDaysArray[allDaysArray.length - 1])
+
+  // const startDate = new Date(req.body.startDate)
+  // const endDate = new Date (req.body.endDate)
+
+
+  // if(firstDay > startDate || endDate > lastDay){
+  //   const extraDaysBeginning = tripFunctions.getDatesWithinRange(startDate, firstDay)
+  //   const extraDaysEnd = tripFunctions.getDatesWithinRange(lastDay, endDate)
+
+  //   const dateRange = extraDaysBeginning.concat(extraDaysEnd)
+    
+  //   console.log("dateRange",dateRange)
+  //   dateRange && dateRange.map(date => {
+  //     const day = {
+  //       name: "name",
+  //       date: date,
+  //       tripId: id
+  //     }
+  //     Day.create(day)
+  //     .then(day => {
+  //       console.log("Created day" + JSON.stringify(day, null, 4))
+  //       return day
+  //     })
+  //   })
+  //   console.log("we need to create days")
+    
+  // } else if (firstDay < startDate || endDate < lastDay) {
+  //   console.log("we need to remove days")
+  // } else console.log("no change - no need to do anything")
 }
 
-// delete trip by id
+// delete trip by id 
 exports.delete = (req, res) => {
   const id = req.params.id
   Trip.destroy({
-    where: { id: id }
+    where: { id: id },
+    cascade: true
   })
   .then(num => {
+    Day.destroy({
+      where: { tripId: id },
+      cascade: true
+    })
     if(num == 1){
       res.send({
         message: "Trip was deleted successfully"
@@ -141,15 +226,15 @@ exports.deleteAll = (req, res) => {
   })
 }
 
-// find all published trips
-exports.findAllPublished = (req, res) => {
-  Trip.findAll({ where: { published: true }})
+// find all confirmed trips
+exports.findAllConfirmed = (req, res) => {
+  Trip.findAll({ where: { confirmed: true }})
   .then(data => {
     res.send(data)
   })
   .catch(e => {
     res.status(500).send({
-      message: e.message || "Some error occurred while retrieving published trips"
+      message: e.message || "Some error occurred while retrieving confirmed trips"
     })
   })
 } 
