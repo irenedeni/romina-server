@@ -4,6 +4,7 @@ const Task = db.tasks
 
 exports.create = (req, res) => {
   const request = req.body ? req.body : req
+  console.log("request", request)
   const dayId = req.params.dayId
     if (!request.timeframe) {
       res.status(400).send({

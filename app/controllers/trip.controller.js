@@ -7,6 +7,9 @@ const db = require("../models")
 const Trip = db.trips
 const Day = db.days
 const Slot = db.slots
+const Carer = db.carers
+const Task = db.tasks
+
 const Op = db.Sequelize.Op
 
 // create & save new trip
@@ -36,7 +39,7 @@ exports.create = (req, res) => {
       name: request.name,
       confirmed: request.confirmed ? request.confirmed : false
     }
-  
+  console.log("request.confirmed",)
     // Save Trip in db
     Trip.create(trip)
       .then(trip => {
@@ -99,6 +102,19 @@ exports.findOne = (req, res) => {
       include: [{
         model: Slot,
         as: "slots",
+        include: [
+          {
+            model: Carer,
+            as: "carer",
+            foreignKey: "carerId"
+          },
+          {
+            model: Task,
+            through: "tasksSlots",
+            as: "tasks",
+            foreignKey: "slotId"
+          }
+      ]
       }]
     }]
   })

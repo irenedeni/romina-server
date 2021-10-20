@@ -15,7 +15,7 @@ module.exports = app => {
   router.post("/trips/:tripId/days", days.create)
 
   // slot
-  router.post(("/trips/:tripId/days/:dayId/slots"), slots.create)
+  router.post(("/days/:dayId/slots"), slots.create)
 
   // carer
   router.post(("/carers"), carers.create)
