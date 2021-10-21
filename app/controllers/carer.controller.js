@@ -27,3 +27,24 @@ exports.create = (req, res) => {
       })
     return carer
   }
+
+
+  exports.findAll = (req, res) => {
+
+    const name = req.query.name
+    var condition = name ? { name: {[Op.iLike]: `%${name}`} } : null
+  
+    Carer.findAll({ 
+      where: condition
+    })
+    .then(data => {
+      console.log("data", data)
+      res.send(data)
+    })
+    .catch(e => {
+      res.status(500).send({
+        message: e.message || "Some error occurred while retrieving carers."
+      })
+    })
+  }
+  

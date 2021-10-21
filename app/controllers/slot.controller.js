@@ -1,6 +1,7 @@
 const db = require("../models")
 const Slot = db.slots
 const Task = db.tasks
+const Carer = db.carers
 
 exports.create = (req, res) => {
   const request = req.body ? req.body : req
@@ -59,7 +60,20 @@ exports.addTask = (req, res) => {
 
 exports.findOne = (req, res) => {
   const id = req.params.id
-  Slot.findByPk(id)
+  Slot.findByPk(id, { 
+    include: [
+    {
+      model: Carer,
+      as: "carer",
+      foreignKey: "carerId"
+    },
+    // {
+    //   model: Task,
+    //   as: "tasks",
+    //   foreignKey: "slotId"
+    // }
+  ]
+  })
   .then(data => {
     if(data) {
       console.log("Found slot: " + JSON.stringify(data, null, 4))
