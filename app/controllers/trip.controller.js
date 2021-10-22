@@ -39,7 +39,6 @@ exports.create = (req, res) => {
       name: request.name,
       confirmed: request.confirmed ? request.confirmed : false
     }
-  console.log("request.confirmed",)
     // Save Trip in db
     Trip.create(trip)
       .then(trip => {
@@ -120,6 +119,7 @@ exports.findOne = (req, res) => {
   })
   .then(data => {
     if(data) {
+      data.days?.sort(tripFunctions.sortDatesInArrayOfObjects)
       res.send(data)
     } else {
       res.status(400).send({

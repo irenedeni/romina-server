@@ -60,7 +60,7 @@ module.exports = app => {
   router.put("/days/:dayId/slots/:id", slots.update)
 
   // add task to slot
-  router.put("/trips/:tripId/days/:dayId/slots/:slotId/tasks/:taskId", slots.addTask)
+  router.put("/slots/:slotId/tasks/:taskId", slots.addTask)
 
 
   // ** DELETE ONE **
