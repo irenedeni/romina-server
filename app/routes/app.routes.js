@@ -37,6 +37,9 @@ module.exports = app => {
   // carers
   router.get("/carers", carers.findAll)
 
+  // tasks
+  router.get("/tasks", tasks.findAll)
+
 
   // ** GET ONE **
   // trip with days
@@ -71,7 +74,7 @@ module.exports = app => {
   router.delete("/trips/:tripId/days/:id", days.delete)
 
   // slot
-  router.delete("/days/:dayId/slots/:id", slots.delete)
+  router.delete("/slots/:id", slots.delete)
 
   
   // ** DELETE ALL **

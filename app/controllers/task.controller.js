@@ -45,6 +45,25 @@ exports.findOne = (req, res) => {
   })
 }
 
+exports.findAll = (req, res) => {
+
+  const type = req.query.type
+  var condition = type ? { type: {[Op.iLike]: `%${type}`} } : null
+
+  Task.findAll({ 
+    where: condition
+  })
+  .then(data => {
+    res.send(data)
+  })
+  .catch(e => {
+    res.status(500).send({
+      message: e.message || "Some error occurred while retrieving tasks."
+    })
+  })
+}
+
+
 exports.update = (req, res) => {
   const id = req.params.id
   Task.update(req.body, {

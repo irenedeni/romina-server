@@ -5,7 +5,6 @@ const Carer = db.carers
 
 exports.create = (req, res) => {
   const request = req.body ? req.body : req
-  console.log("request", request)
   const dayId = req.params.dayId
     if (!request.timeframe) {
       res.status(400).send({
@@ -67,11 +66,6 @@ exports.findOne = (req, res) => {
       as: "carer",
       foreignKey: "carerId"
     },
-    // {
-    //   model: Task,
-    //   as: "tasks",
-    //   foreignKey: "slotId"
-    // }
   ]
   })
   .then(data => {

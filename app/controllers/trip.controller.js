@@ -50,23 +50,24 @@ exports.create = (req, res) => {
             tripId: trip.id
           }
           Day.create(day)
-            .then(day => {
-              console.log("Created day" + JSON.stringify(day, null, 4))
-              return day
-            })
-      .catch(e => {
-        console.log(e)
-      })
-    })
-    if(!daysArray || daysArray.length < 1){
-      console.log(`There was an error while creating days in trip '${request.name}'`)
-    }
+          .then(day => {
+            console.log("Created day" + JSON.stringify(day, null, 4))
+            return day
+          })
+          .catch(e => {
+            console.log(e)
+          })
+        })
+      if(!daysArray || daysArray.length < 1){
+        console.log(`There was an error while creating days in trip '${request.name}'`)
+      }
+      return trip
       })
       .catch(e => {
         console.log(e)
       })
       return trip
-}
+  }
 
   // get all trips from DB (including days)
 exports.findAll = (req, res) => {
