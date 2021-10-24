@@ -71,7 +71,6 @@ exports.create = (req, res) => {
 
   // get all trips from DB (including days)
 exports.findAll = (req, res) => {
-
   const name = req.query.name
   var condition = name ? { name: {[Op.iLike]: `%${name}`} } : null
 
@@ -159,41 +158,6 @@ exports.update = (req, res) => {
       message: e.message || "Error while updating trip with id=" + id
     })
   })
-
-  // const allDaysArray = req.body?.days?.map(day => day.date)
-  // allDaysArray.sort(tripFunctions.sortDatesInArray)
-  // console.log("allDaysArray",allDaysArray)
-  // const firstDay = new Date(allDaysArray[0])
-  // const lastDay = new Date(allDaysArray[allDaysArray.length - 1])
-
-  // const startDate = new Date(req.body.startDate)
-  // const endDate = new Date (req.body.endDate)
-
-
-  // if(firstDay > startDate || endDate > lastDay){
-  //   const extraDaysBeginning = tripFunctions.getDatesWithinRange(startDate, firstDay)
-  //   const extraDaysEnd = tripFunctions.getDatesWithinRange(lastDay, endDate)
-
-  //   const dateRange = extraDaysBeginning.concat(extraDaysEnd)
-    
-  //   console.log("dateRange",dateRange)
-  //   dateRange && dateRange.map(date => {
-  //     const day = {
-  //       name: "name",
-  //       date: date,
-  //       tripId: id
-  //     }
-  //     Day.create(day)
-  //     .then(day => {
-  //       console.log("Created day" + JSON.stringify(day, null, 4))
-  //       return day
-  //     })
-  //   })
-  //   console.log("we need to create days")
-    
-  // } else if (firstDay < startDate || endDate < lastDay) {
-  //   console.log("we need to remove days")
-  // } else console.log("no change - no need to do anything")
 }
 
 // delete trip by id 

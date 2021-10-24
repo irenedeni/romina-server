@@ -32,11 +32,11 @@ exports.create = (req, res) => {
     return slot
 }
 
-exports.addTask = (req, res) => {
+exports.addTaskToSlot = (req, res) => {
   const slotId = req.params.slotId
   const taskId = req.params.taskId
 
-  return Slot.findByPk(slotId)
+   Slot.findByPk(slotId)
     .then((slot) => {
       if (!slot) {
         console.log("Slot not found!")

@@ -40,7 +40,7 @@ exports.findOne = (req, res) => {
   })
   .catch(e => {
     res.status(500).send({
-      message: e.message || "Error retrieving trip with id=" + id
+      message: e.message || "Error retrieving task with id=" + id
     })
   })
 }
@@ -106,6 +106,23 @@ exports.delete = (req, res) => {
   .catch(e => {
     res.status(500).send({
       message: e.message || "Could not delete day with id=" + id
+    })
+  })
+}
+
+exports.deleteAll = (req, res) => {
+  Task.destroy({
+    where: {},
+    truncate: false
+  })
+  .then(nums => {
+    res.send({ 
+      message: `${nums} carers were deleted successfully`
+    })
+  })
+  .catch(e => {
+    res.status(500).send({
+      message: e.message || "Some error occurred while removing all carers"
     })
   })
 }

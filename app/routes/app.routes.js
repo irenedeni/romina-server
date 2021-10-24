@@ -28,9 +28,6 @@ module.exports = app => {
   // trips
   router.get("/trips", trips.findAll)
 
-  // days
-  // router.get("/trips/:tripId/days", days.findAll)
-  
   // confirmed trips
   router.get("/trips/confirmed", trips.findAllConfirmed)
 
@@ -39,6 +36,9 @@ module.exports = app => {
 
   // tasks
   router.get("/tasks", tasks.findAll)
+
+  // days
+  // router.get("/trips/:tripId/days", days.findAll)
 
 
   // ** GET ONE **
@@ -50,6 +50,12 @@ module.exports = app => {
 
   // slot 
   router.get(("/days/:dayId/slots/:id"), slots.findOne)
+
+  // carer 
+  router.get(("/carers/:id"), carers.findOne)
+
+  // task 
+  router.get(("/tasks/:id"), tasks.findOne)
 
 
   // ** UPDATE **
@@ -63,7 +69,13 @@ module.exports = app => {
   router.put("/days/:dayId/slots/:id", slots.update)
 
   // add task to slot
-  router.put("/slots/:slotId/tasks/:taskId", slots.addTask)
+  router.put("/slots/:slotId/tasks/:taskId", slots.addTaskToSlot)
+
+  // carer 
+  router.put(("/carers/:id"), carers.update)
+
+  // task 
+  router.put(("/tasks/:id"), tasks.update)
 
 
   // ** DELETE ONE **
@@ -76,10 +88,22 @@ module.exports = app => {
   // slot
   router.delete("/slots/:id", slots.delete)
 
+  // carer 
+  router.delete(("/carers/:id"), carers.delete)
+
+  // task 
+  router.delete(("/tasks/:id"), tasks.delete)
+
   
   // ** DELETE ALL **
   // trips
   router.delete("/trips", trips.deleteAll)
+
+  // carer 
+  router.put(("/carers"), carers.deleteAll)
+
+  // task 
+  router.put(("/tasks"), tasks.deleteAll)
 
   app.use("/api", router)
 }
