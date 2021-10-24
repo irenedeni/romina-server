@@ -1,6 +1,7 @@
 const db = require("../models")
 const Day = db.days
 const Slot = db.slots
+const Carer = db.carers
 
 exports.create = (req, res) => {
   const request = req.body ? req.body : req
@@ -49,10 +50,19 @@ exports.create = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id
   Day.findByPk(id, { 
-    include: [{
+    include: [
+    {
       model: Slot,
-      as: "slots"
-    }]
+      as: "slots",
+      include: [
+        {
+          model: Carer,
+          as: "carer",
+          foreignKey: "carerId"
+        },
+      ]
+    },
+  ]
   })
   .then(data => {
     if(data) {

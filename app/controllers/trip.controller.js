@@ -7,6 +7,9 @@ const db = require("../models")
 const Trip = db.trips
 const Day = db.days
 const Slot = db.slots
+const Carer = db.carers
+const Task = db.tasks
+
 const Op = db.Sequelize.Op
 
 // create & save new trip
@@ -36,7 +39,6 @@ exports.create = (req, res) => {
       name: request.name,
       confirmed: request.confirmed ? request.confirmed : false
     }
-  
     // Save Trip in db
     Trip.create(trip)
       .then(trip => {
@@ -48,27 +50,27 @@ exports.create = (req, res) => {
             tripId: trip.id
           }
           Day.create(day)
-            .then(day => {
-              console.log("Created day" + JSON.stringify(day, null, 4))
-              return day
-            })
-      .catch(e => {
-        console.log(e)
-      })
-    })
-    if(!daysArray || daysArray.length < 1){
-      console.log(`There was an error while creating days in trip '${request.name}'`)
-    }
+          .then(day => {
+            console.log("Created day" + JSON.stringify(day, null, 4))
+            return day
+          })
+          .catch(e => {
+            console.log(e)
+          })
+        })
+      if(!daysArray || daysArray.length < 1){
+        console.log(`There was an error while creating days in trip '${request.name}'`)
+      }
+      return trip
       })
       .catch(e => {
         console.log(e)
       })
       return trip
-}
+  }
 
   // get all trips from DB (including days)
 exports.findAll = (req, res) => {
-
   const name = req.query.name
   var condition = name ? { name: {[Op.iLike]: `%${name}`} } : null
 
@@ -99,11 +101,25 @@ exports.findOne = (req, res) => {
       include: [{
         model: Slot,
         as: "slots",
+        include: [
+          {
+            model: Carer,
+            as: "carer",
+            foreignKey: "carerId"
+          },
+          {
+            model: Task,
+            through: "tasksSlots",
+            as: "tasks",
+            foreignKey: "slotId"
+          }
+      ]
       }]
     }]
   })
   .then(data => {
     if(data) {
+      data.days?.sort(tripFunctions.sortDatesInArrayOfObjects)
       res.send(data)
     } else {
       res.status(400).send({
@@ -142,41 +158,6 @@ exports.update = (req, res) => {
       message: e.message || "Error while updating trip with id=" + id
     })
   })
-
-  // const allDaysArray = req.body?.days?.map(day => day.date)
-  // allDaysArray.sort(tripFunctions.sortDatesInArray)
-  // console.log("allDaysArray",allDaysArray)
-  // const firstDay = new Date(allDaysArray[0])
-  // const lastDay = new Date(allDaysArray[allDaysArray.length - 1])
-
-  // const startDate = new Date(req.body.startDate)
-  // const endDate = new Date (req.body.endDate)
-
-
-  // if(firstDay > startDate || endDate > lastDay){
-  //   const extraDaysBeginning = tripFunctions.getDatesWithinRange(startDate, firstDay)
-  //   const extraDaysEnd = tripFunctions.getDatesWithinRange(lastDay, endDate)
-
-  //   const dateRange = extraDaysBeginning.concat(extraDaysEnd)
-    
-  //   console.log("dateRange",dateRange)
-  //   dateRange && dateRange.map(date => {
-  //     const day = {
-  //       name: "name",
-  //       date: date,
-  //       tripId: id
-  //     }
-  //     Day.create(day)
-  //     .then(day => {
-  //       console.log("Created day" + JSON.stringify(day, null, 4))
-  //       return day
-  //     })
-  //   })
-  //   console.log("we need to create days")
-    
-  // } else if (firstDay < startDate || endDate < lastDay) {
-  //   console.log("we need to remove days")
-  // } else console.log("no change - no need to do anything")
 }
 
 // delete trip by id 

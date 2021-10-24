@@ -15,7 +15,7 @@ module.exports = app => {
   router.post("/trips/:tripId/days", days.create)
 
   // slot
-  router.post(("/trips/:tripId/days/:dayId/slots"), slots.create)
+  router.post(("/days/:dayId/slots"), slots.create)
 
   // carer
   router.post(("/carers"), carers.create)
@@ -28,11 +28,17 @@ module.exports = app => {
   // trips
   router.get("/trips", trips.findAll)
 
-  // days
-  // router.get("/trips/:tripId/days", days.findAll)
-  
   // confirmed trips
   router.get("/trips/confirmed", trips.findAllConfirmed)
+
+  // carers
+  router.get("/carers", carers.findAll)
+
+  // tasks
+  router.get("/tasks", tasks.findAll)
+
+  // days
+  // router.get("/trips/:tripId/days", days.findAll)
 
 
   // ** GET ONE **
@@ -43,7 +49,13 @@ module.exports = app => {
   router.get(("/trips/:tripId/days/:id"), days.findOne)
 
   // slot 
-  router.get(("/trips/:tripId/days/:dayId/slots/:id"), slots.findOne)
+  router.get(("/days/:dayId/slots/:id"), slots.findOne)
+
+  // carer 
+  router.get(("/carers/:id"), carers.findOne)
+
+  // task 
+  router.get(("/tasks/:id"), tasks.findOne)
 
 
   // ** UPDATE **
@@ -54,10 +66,16 @@ module.exports = app => {
   router.put("/trips/:tripId/days/:id", days.update)
 
   // slot
-  router.put("/trips/:tripId/days/:dayId/slots/:id", slots.update)
+  router.put("/days/:dayId/slots/:id", slots.update)
 
   // add task to slot
-  router.put("/trips/:tripId/days/:dayId/slots/:slotId/tasks/:taskId", slots.addTask)
+  router.put("/slots/:slotId/tasks/:taskId", slots.addTaskToSlot)
+
+  // carer 
+  router.put(("/carers/:id"), carers.update)
+
+  // task 
+  router.put(("/tasks/:id"), tasks.update)
 
 
   // ** DELETE ONE **
@@ -68,12 +86,24 @@ module.exports = app => {
   router.delete("/trips/:tripId/days/:id", days.delete)
 
   // slot
-  router.delete("/trips/:tripId/days/:dayId/slots/:id", slots.delete)
+  router.delete("/slots/:id", slots.delete)
+
+  // carer 
+  router.delete(("/carers/:id"), carers.delete)
+
+  // task 
+  router.delete(("/tasks/:id"), tasks.delete)
 
   
   // ** DELETE ALL **
   // trips
   router.delete("/trips", trips.deleteAll)
+
+  // carer 
+  router.put(("/carers"), carers.deleteAll)
+
+  // task 
+  router.put(("/tasks"), tasks.deleteAll)
 
   app.use("/api", router)
 }

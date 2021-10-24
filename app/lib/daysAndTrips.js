@@ -21,11 +21,13 @@ const getDatesWithinRange = (start, end) => {
   return arr
 }
 
-const sortDatesInArray = (date1, date2) => {
+const sortDatesInArrayOfObjects = (obj1, obj2) => {
+  const date1 = obj1?.date ? obj1?.date : obj1?.dataValues?.date ? obj1?.dataValues?.date : null
+  const date2 = obj2?.date ? obj2?.date : obj2?.dataValues?.date ? obj2?.dataValues?.date : null
   if(date1 > date2) return 1
   if(date1 < date2) return -1
   return 0
 }
 
 
-module.exports = { createDaysFromTrip, getDatesWithinRange, sortDatesInArray }
+module.exports = { createDaysFromTrip, getDatesWithinRange, sortDatesInArrayOfObjects }
