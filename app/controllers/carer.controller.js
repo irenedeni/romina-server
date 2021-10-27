@@ -34,13 +34,12 @@ exports.create = (req, res) => {
   exports.findAll = (req, res) => {
 
     const name = req.query.name
-    var condition = name ? { name: {[Op.iLike]: `%${name}`} } : null
+    var condition = name ? { name: {[Op.iLike]: "%" + name + "%"} } : null
   
     Carer.findAll({ 
       where: condition
     })
     .then(data => {
-      console.log("CARER!!!", data)
       res.send(data)
     })
     .catch(e => {
