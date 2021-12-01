@@ -94,6 +94,9 @@ module.exports = app => {
   // task 
   router.delete(("/tasks/:id"), tasks.delete)
 
+  // delete task / slot entry
+  router.delete("/slots/:slotId/tasks/:taskId", slots.removeTaskToSlot)
+
   
   // ** DELETE ALL **
   // trips

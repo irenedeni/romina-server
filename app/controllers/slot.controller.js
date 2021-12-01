@@ -57,6 +57,36 @@ exports.addTaskToSlot = (req, res) => {
     })
 }
 
+exports.removeTaskToSlot = (req, res) => {
+  const slotId = req.params.slotId
+  const taskId = req.params.taskId
+  Slot.findByPk(slotId)
+  .then((slot) => {
+    if (!slot) {
+      console.log("Slot not found!")
+      return null
+    }
+    Task.findByPk(taskId)
+    .then((task) => {
+      if(!task) {
+        console.log("Task not found!")
+        return null
+      }
+      slot.removeTask(task)
+      console.log(`>> Removed Task id=${task.id} from Slot id=${slot.id}`)
+      return slot
+    })
+  })
+  .catch(e => {
+    res.status(500).send({
+      message: e.message || "Could not delete task with id=" + taskId
+    })
+  })
+}
+
+
+
+
 exports.findOne = (req, res) => {
   const id = req.params.id
   Slot.findByPk(id, { 
@@ -126,7 +156,7 @@ exports.delete = (req, res) => {
   })
   .catch(e => {
     res.status(500).send({
-      message: e.message || "Could not delete day with id=" + id
+      message: e.message || "Could not delete slot with id=" + id
     })
   })
 }
