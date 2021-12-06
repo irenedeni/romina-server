@@ -41,32 +41,32 @@ exports.create = (req, res) => {
     }
     // Save Trip in db
     Trip.create(trip)
-      .then(trip => {
+      .then(async trip => {
         console.log("Created trip: " + JSON.stringify(trip, null, 4))
         const daysArray = tripFunctions.createDaysFromTrip(request.startDate, request.endDate)
-        daysArray && daysArray.length && daysArray.map(date => {
-          day = {
+        if(!daysArray || !daysArray.length){
+          console.log(`There was an error while creating days in trip '${request.name}'`)
+        }
+        await Promise.all(daysArray.map(date => {
+          const day = {
             date: date,
             tripId: trip.id
           }
           Day.create(day)
           .then(day => {
             console.log("Created day" + JSON.stringify(day, null, 4))
-            return day
           })
           .catch(e => {
             console.log(e)
           })
+        }))
+        res.status(200).send({
+          message: "Trip created"
         })
-      if(!daysArray || daysArray.length < 1){
-        console.log(`There was an error while creating days in trip '${request.name}'`)
-      }
-      return trip
       })
       .catch(e => {
         console.log(e)
       })
-      return trip
   }
 
   // get all trips from DB (including days)
